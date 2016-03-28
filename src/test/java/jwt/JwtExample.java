@@ -1,12 +1,10 @@
 package jwt;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.impl.crypto.RsaProvider;
 import org.junit.Test;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.Key;
-import java.security.KeyStore;
+import java.security.KeyPair;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -38,14 +36,15 @@ public class JwtExample {
     @Test
     public void testAsymmetric() throws Exception {
 
+        KeyPair keyPair = RsaProvider.generateKeyPair();
+
         // Generate JWT Auth header using asymmetric key(public-private key). This is simulating a client.
-        Key key = getCertificateKey();
         String authHeader = getJwtBuilder()
-                .signWith(SignatureAlgorithm.RS256, key)
+                .signWith(SignatureAlgorithm.RS256, keyPair.getPrivate())
                 .compact();
 
         // Validate JWT auth header. This is simulating server side component.
-        Jws<Claims> jws = Jwts.parser().setSigningKey(key).parseClaimsJws(authHeader);
+        Jws<Claims> jws = Jwts.parser().setSigningKey(keyPair.getPublic()).parseClaimsJws(authHeader);
         assertEquals(SignatureAlgorithm.RS256.getValue(), jws.getHeader().getAlgorithm());
         assertEquals("Java_SEG", jws.getBody().getId());
         assertEquals("manish", jws.getBody().getIssuer());
@@ -58,11 +57,5 @@ public class JwtExample {
                 .setSubject("Some subject")
                 .setId("Java_SEG")
                 .setIssuer("manish");
-    }
-
-    private Key getCertificateKey() throws Exception {
-        KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        keyStore.load(Files.newInputStream(Paths.get("src/test/resources/ssl-certs/api-key.p12")), "1111".toCharArray());
-        return keyStore.getKey(keyStore.aliases().nextElement(), "1111".toCharArray());
     }
 }
