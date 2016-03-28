@@ -62,7 +62,7 @@ public class JwtExample {
 
     private Key getCertificateKey() throws Exception {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        keyStore.load(Files.newInputStream(Paths.get("src/main/resources/ssl-certs/api-key.p12")), "1111".toCharArray());
+        keyStore.load(Files.newInputStream(Paths.get("src/test/resources/ssl-certs/api-key.p12")), "1111".toCharArray());
         return keyStore.getKey(keyStore.aliases().nextElement(), "1111".toCharArray());
     }
 }
