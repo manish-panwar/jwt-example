@@ -38,12 +38,12 @@ public class JwtExample {
 
         KeyPair keyPair = RsaProvider.generateKeyPair();
 
-        // Generate JWT Auth header using asymmetric key(public-private key). This is simulating a client.
+        // Sign using private key. This is simulating a client.
         String authHeader = getJwtBuilder()
                 .signWith(SignatureAlgorithm.RS256, keyPair.getPrivate())
                 .compact();
 
-        // Validate JWT auth header. This is simulating server side component.
+        // Validate JWT auth header using public key. This is simulating server side component.
         Jws<Claims> jws = Jwts.parser().setSigningKey(keyPair.getPublic()).parseClaimsJws(authHeader);
         assertEquals(SignatureAlgorithm.RS256.getValue(), jws.getHeader().getAlgorithm());
         assertEquals("Java_SEG", jws.getBody().getId());
