@@ -44,10 +44,11 @@ public class JwtExample {
                 .compact();
 
         // Validate JWT auth header using public key. This is simulating server side component.
-        Jws<Claims> jws = Jwts.parser().setSigningKey(keyPair.getPublic()).parseClaimsJws(authHeader);
-        assertEquals(SignatureAlgorithm.RS256.getValue(), jws.getHeader().getAlgorithm());
-        assertEquals("Java_SEG", jws.getBody().getId());
-        assertEquals("manish", jws.getBody().getIssuer());
+        Jwts.parser()
+                .setSigningKey(keyPair.getPublic())
+                .requireAudience("some_audience")
+                .requireIssuer("manish")
+                .parseClaimsJws(authHeader);
     }
 
     private JwtBuilder getJwtBuilder() {
@@ -55,6 +56,7 @@ public class JwtExample {
         return Jwts.builder()
                 .setExpiration(Date.from(expiry))
                 .setSubject("Some subject")
+                .setAudience("some_audience")
                 .setId("Java_SEG")
                 .setIssuer("manish");
     }
