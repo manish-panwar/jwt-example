@@ -1,6 +1,7 @@
 package jwt;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.impl.DefaultClaims;
 import io.jsonwebtoken.impl.crypto.RsaProvider;
 import org.junit.Test;
 
@@ -109,8 +110,9 @@ public class JwtExample {
                 .requireAudience(AUDIENCE)
                 .requireIssuer(ISSUER)
                 .parseClaimsJws(jwtToken);
-        System.out.println(claims);
 
+        assertEquals("/this/is/some/uri", ((DefaultClaims)claims.getBody()).getSubject());
+        System.out.println(claims);
     }
 
     @Test
@@ -146,6 +148,7 @@ public class JwtExample {
         return Jwts.builder()
                 .setExpiration(Date.from(expiry))
                 .setAudience(AUDIENCE)
-                .setIssuer(ISSUER);
+                .setIssuer(ISSUER)
+                .setSubject("/this/is/some/uri");
     }
 }
