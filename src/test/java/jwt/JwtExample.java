@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class JwtExample {
 
-    public static final String AUDIENCE = "SEG:some_fake_location_group_id";
+    public static final String AUDIENCE = "Something:some_fake_id";
     public static final String ISSUER = "Console";
 
     private final String modulus = "AL95wMahFHS+IgwzuVlkg1X2C86r5vnySAkaRW9VAnY9k1GHAiy9T5oddqI47n1UUcNrnMMcBXT+SKzkH/Y/N1/0AU05KoUZCweJWvs2pDde+7wjoaYr0wJyL3AxpkkecbqYwNTH9WUi6pXe2W3MMaFLpGSyYzEwuCvhCyOPKzGK7iUwOpEmgq84iX+3eLcErgtUN6mLvfDGXK/uiVPn99QdTOgiszbR9Emx9tMpc7lMYckcp5dccUsaF6n+eyY+5xdsldcRm3MYSTiTTkciHGD3qJWHyy49FRdXlPmHnpdf+1ytjdUH8nexZZkCpy6K5P3c3Z8jtNEBXWsEYZn2ie8=";
@@ -91,7 +91,6 @@ public class JwtExample {
                 .signWith(SignatureAlgorithm.RS256, keyPair.getPrivate())
                 .compact();
 
-        // Get the modulus and exponent from RSA public key. This is what will be given to SEG via REST API or during the installation.
         RSAPublicKey rsaPublicKey = (RSAPublicKey) keyPair.getPublic();
         String modulus = Base64.getEncoder().encodeToString(rsaPublicKey.getModulus().toByteArray());
         String exponent = Base64.getEncoder().encodeToString(rsaPublicKey.getPublicExponent().toByteArray());
@@ -100,7 +99,6 @@ public class JwtExample {
         System.out.println(exponent);
         System.out.println(privateKey);
 
-        // Below code shows how SEG will use the Modulus and exponent that are returned by REST API/Console
         PublicKey pubKey = KeyFactory.getInstance("RSA").generatePublic(
                 new RSAPublicKeySpec(new BigInteger(1, Base64.getDecoder().decode(modulus)),
                         new BigInteger(1, Base64.getDecoder().decode(exponent))));
